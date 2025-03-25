@@ -1,7 +1,7 @@
 Scratching together some ideas.
 
 Problems:
-  - to build an image, we could inject the plugins & config into the docker image.  But that requires also pulling in all the archivesspace code.
+  - to build an image, we could bake the plugins & config into the docker image.  But that requires also pulling in all the archivesspace code.
   - so far, I've gone half-way down both direction, but should pick only one.
   - maybe make this only the production docker-compose, and leave Lyrasis to make the docker image
 
@@ -36,11 +36,13 @@ docker compose up -d
 ```
 
 ### To clear the db
-```
-docker compose down
-docker volume rm archivesspace_db-data
-docker compose up -d
-```
+1) place a recent good archivesspace sqldump into ./sql
+
+2)  ```
+    docker compose down
+    docker volume rm archivesspace_db-data
+    docker compose up -d
+    ```
 
 # Production
 1) git clone this repo and git checkout branch 'production'
