@@ -5,6 +5,22 @@ Problems:
   - so far, I've gone half-way down both direction, but should pick only one.
   - maybe make this only the production docker-compose, and leave Lyrasis to make the docker image
 
+  - a different approach is to make this repo a wrapper around the main archivesspace folder
+
+# Config
+
+1. Set the ./archivesspace/config/config.rb to match to these docker-compose.yml values:
+    - AppConfig[:frontend_proxy_url] = to the docker-compose.yml routers.as_staff.rule.  i.e., 'https://archivesspace.localhost/staff'
+    - AppConfig[:public_proxy_url] = to the docker-compose.yml routers.as_public.rule.  i.e., 'https://archivesspace.localhost'
+    - AppConfig[:db_url] = to the docker-compose.yml db service name + listening port.  i.e., 'jdbc:mysql://as_db:3306/archivess.....'
+    - AppConfig[:solr_url] = to the docker-compose.yml solr service name + listening port.  i.e., 'http://as_solr:8983/solr/archivesspace'
+1. Copy the file `.env_example` to `.env`   then revise as desired.  No change is required.
+1. Add any plugins to the ./archivesspace/plugins folder
+    - cd ./archivesspace/plugins
+    - git clone https://github.com/hudmol/digitization_work_order.git
+    - git clone https://github.com/hudmol/user_defined_in_basic.git
+    - git clone https://github.com/uncw-library/archivesspace-plugins-local.git local   {i.e., clone our local plugin from our repo}
+1. Solr config was copied from archivesspace folder
 
 
 # ArchivesSpace docker compose

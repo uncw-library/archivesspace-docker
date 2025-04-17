@@ -16,14 +16,7 @@ services:
       - ./archivesspace/plugins:/archivesspace/plugins
       - ./archivesspace/config:/archivesspace/config
     labels:
-      - traefik.enable=true
-      - traefik.http.routers.as_staff.entrypoints=websecure
-      - traefik.http.routers.as_staff.rule=Host(`archivesspace.localhost`) && PathPrefix(`/staff`) && !PathPrefix(`/staff/api`)
-      - traefik.http.routers.as_staff.tls=true
-      - traefik.http.routers.as_staff.priority=100
-      - traefik.http.routers.as_staff.service=as_staff
-      - traefik.http.services.as_staff.loadbalancer.server.port=8080
-
+      # highest priority, a deep subpath
       - traefik.http.routers.as_api.entrypoints=websecure
       - traefik.http.routers.as_api.rule=Host(`archivesspace.localhost`) && PathPrefix(`/staff/api`)
       - traefik.http.routers.as_api.tls=true
@@ -31,6 +24,16 @@ services:
       - traefik.http.routers.as_api.service=as_api
       - traefik.http.services.as_api.loadbalancer.server.port=8089
 
+      # med priority, a subpath
+      - traefik.enable=true
+      - traefik.http.routers.as_staff.entrypoints=websecure
+      - traefik.http.routers.as_staff.rule=Host(`archivesspace.localhost`) && PathPrefix(`/staff`)
+      - traefik.http.routers.as_staff.tls=true
+      - traefik.http.routers.as_staff.priority=100
+      - traefik.http.routers.as_staff.service=as_staff
+      - traefik.http.services.as_staff.loadbalancer.server.port=8080
+
+      # med priority, a subpath
       - traefik.http.routers.as_oai.entrypoints=websecure
       - traefik.http.routers.as_oai.rule=Host(`archivesspace.localhost`) && PathPrefix(`/oai`)
       - traefik.http.routers.as_oai.tls=true
@@ -38,17 +41,16 @@ services:
       - traefik.http.routers.as_oai.service=as_oai
       - traefik.http.services.as_oai.loadbalancer.server.port=8082
 
+      # lowest priority, catch-all default
       - traefik.http.routers.as_public.entrypoints=websecure
-      - traefik.http.routers.as_public.rule=Host(`archivesspace.localhost`) && !PathPrefix(`/oai`) && !PathPrefix(`/staff`)
+      - traefik.http.routers.as_public.rule=Host(`archivesspace.localhost`)
       - traefik.http.routers.as_public.tls=true
-      - traefik.http.routers.as_public.priority=50
+      - traefik.http.routers.as_public.priority=1
       - traefik.http.routers.as_public.service=as_public
       - traefik.http.services.as_public.loadbalancer.server.port=8081
-
-    networks:
-      - as_network
-      - default
-
+    # networks:
+    #   - default
+    #   - as_network
     restart: unless-stopped
     mem_limit: 4g
 
@@ -63,8 +65,8 @@ services:
       - "8983:8983"
     volumes:
       - solr-data:/var/solr
-    networks:
-      - as_network
+    # networks:
+    #   - as_network
     command: solr-create -p 8983 -c archivesspace -d archivesspace
     restart: unless-stopped
     mem_limit: 1536m
@@ -78,8 +80,8 @@ services:
       - .env
     ports:
       - "3306:3306"
-    networks:
-      - as_network
+    # networks:
+    #   - as_network
     volumes:
       - db-data:/var/lib/mysql
       - ./sql:/docker-entrypoint-initdb.d
@@ -95,5 +97,5 @@ networks:
   default:
     name: traefik_net
     external: true
-  as_network:
-    driver: bridge
+  # as_network:
+  #   driver: bridge
