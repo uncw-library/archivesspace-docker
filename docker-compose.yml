@@ -5,7 +5,7 @@ services:
   archivesspace:
     image: archivesspace/archivesspace:${ARCHIVESSPACE_DOCKER_TAG}
     container_name: archivesspace
-    platform: linux/x86_64
+    platform: linux/amd64
     env_file:
       - .env
     depends_on:
@@ -55,8 +55,9 @@ services:
     mem_limit: 4g
 
   as_solr:
-    # image: archivesspace/solr:${ARCHIVESSPACE_DOCKER_TAG}
-    image: archivesspace/solr:m1
+    image: archivesspace/solr:${ARCHIVESSPACE_DOCKER_TAG}
+    platform: linux/amd64
+    # image: archivesspace/solr:m1
     container_name: as_solr
     build: ./solr
     env_file:
