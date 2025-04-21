@@ -48,9 +48,9 @@ services:
       - traefik.http.routers.as_public.priority=1
       - traefik.http.routers.as_public.service=as_public
       - traefik.http.services.as_public.loadbalancer.server.port=8081
-    # networks:
-    #   - default
-    #   - as_network
+    networks:
+      - archivesspace_net
+      - default
     restart: unless-stopped
     mem_limit: 4g
 
@@ -62,12 +62,10 @@ services:
     build: ./solr
     env_file:
       - .env
-    ports:
-      - "8983:8983"
     volumes:
       - solr-data:/var/solr
-    # networks:
-    #   - as_network
+    networks:
+      - archivesspace_net
     command: solr-create -p 8983 -c archivesspace -d archivesspace
     restart: unless-stopped
     mem_limit: 1536m
@@ -79,10 +77,8 @@ services:
       - SYS_NICE
     env_file:
       - .env
-    ports:
-      - "3306:3306"
-    # networks:
-    #   - as_network
+    networks:
+      - archivesspace_net
     volumes:
       - db-data:/var/lib/mysql
       - ./sql:/docker-entrypoint-initdb.d
@@ -98,5 +94,5 @@ networks:
   default:
     name: traefik_net
     external: true
-  # as_network:
-  #   driver: bridge
+  archivesspace_net:
+    driver: bridge
