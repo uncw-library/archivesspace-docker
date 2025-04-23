@@ -16,6 +16,9 @@ services:
       - ./archivesspace/plugins:/archivesspace/plugins
       - ./archivesspace/config:/archivesspace/config
     labels:
+      - traefik.enable=true
+      - traefik.docker.network=traefik_net
+
       # highest priority, a deep subpath
       - traefik.http.routers.as_api.entrypoints=websecure
       - traefik.http.routers.as_api.rule=Host(`archivesspace.localhost`) && PathPrefix(`/staff/api`)
@@ -25,7 +28,6 @@ services:
       - traefik.http.services.as_api.loadbalancer.server.port=8089
 
       # med priority, a subpath
-      - traefik.enable=true
       - traefik.http.routers.as_staff.entrypoints=websecure
       - traefik.http.routers.as_staff.rule=Host(`archivesspace.localhost`) && PathPrefix(`/staff`)
       - traefik.http.routers.as_staff.tls=true
@@ -95,4 +97,5 @@ networks:
     name: traefik_net
     external: true
   archivesspace_net:
+    internal: true
     driver: bridge
