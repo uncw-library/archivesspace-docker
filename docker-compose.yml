@@ -5,23 +5,20 @@ services:
   archivesspace:
     image: archivesspace/archivesspace:${ARCHIVESSPACE_DOCKER_TAG}
     container_name: archivesspace
-    platform: linux/amd64
     env_file:
       - .env
     depends_on:
-      - as_db
       - as_solr
     volumes:
       - app-data:/archivesspace/data
-      - ./archivesspace/plugins:/archivesspace/plugins
-      - ./archivesspace/config:/archivesspace/config
+      - ./mounted/archivesspace/config:/archivesspace/config
     labels:
       - traefik.enable=true
       - traefik.docker.network=traefik_net
 
       # highest priority, a deep subpath
       - traefik.http.routers.as_api.entrypoints=websecure
-      - traefik.http.routers.as_api.rule=Host(`archivesspace.localhost`) && PathPrefix(`/staff/api`)
+      - traefik.http.routers.as_api.rule=Host(`archivesspace-dev.uncw.edu`) && PathPrefix(`/staff/api`)
       - traefik.http.routers.as_api.tls=true
       - traefik.http.routers.as_api.priority=200
       - traefik.http.routers.as_api.service=as_api
@@ -29,7 +26,7 @@ services:
 
       # med priority, a subpath
       - traefik.http.routers.as_staff.entrypoints=websecure
-      - traefik.http.routers.as_staff.rule=Host(`archivesspace.localhost`) && PathPrefix(`/staff`)
+      - traefik.http.routers.as_staff.rule=Host(`aspace-dev.uncw.edu`)
       - traefik.http.routers.as_staff.tls=true
       - traefik.http.routers.as_staff.priority=100
       - traefik.http.routers.as_staff.service=as_staff
@@ -37,7 +34,7 @@ services:
 
       # med priority, a subpath
       - traefik.http.routers.as_oai.entrypoints=websecure
-      - traefik.http.routers.as_oai.rule=Host(`archivesspace.localhost`) && PathPrefix(`/oai`)
+      - traefik.http.routers.as_oai.rule=Host(`archivesspace-dev.uncw.edu`) && PathPrefix(`/oai`)
       - traefik.http.routers.as_oai.tls=true
       - traefik.http.routers.as_oai.priority=100
       - traefik.http.routers.as_oai.service=as_oai
@@ -45,7 +42,7 @@ services:
 
       # lowest priority, catch-all default
       - traefik.http.routers.as_public.entrypoints=websecure
-      - traefik.http.routers.as_public.rule=Host(`archivesspace.localhost`)
+      - traefik.http.routers.as_public.rule=Host(`archivesspace-dev.uncw.edu`)
       - traefik.http.routers.as_public.tls=true
       - traefik.http.routers.as_public.priority=1
       - traefik.http.routers.as_public.service=as_public
@@ -58,8 +55,6 @@ services:
 
   as_solr:
     image: archivesspace/solr:${ARCHIVESSPACE_DOCKER_TAG}
-    platform: linux/amd64
-    # image: archivesspace/solr:m1
     container_name: as_solr
     build: ./solr
     env_file:
@@ -72,24 +67,8 @@ services:
     restart: unless-stopped
     mem_limit: 1536m
 
-  as_db:
-    image: mysql:8
-    container_name: as_db
-    cap_add:
-      - SYS_NICE
-    env_file:
-      - .env
-    networks:
-      - archivesspace_net
-    volumes:
-      - db-data:/var/lib/mysql
-      - ./sql:/docker-entrypoint-initdb.d
-    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --innodb_buffer_pool_size=1G  --innodb_buffer_pool_instances=1 --log_bin_trust_function_creators=1
-    restart: unless-stopped
-
 volumes:
   app-data:
-  db-data:
   solr-data:
 
 networks:
