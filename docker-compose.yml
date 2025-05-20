@@ -12,6 +12,7 @@ services:
     volumes:
       - app-data:/archivesspace/data
       - ./mounted/archivesspace/config:/archivesspace/config
+      - ./mounted/archivesspace/plugins:/archivesspace/plugins
     labels:
       - traefik.enable=true
       - traefik.docker.network=traefik_net
