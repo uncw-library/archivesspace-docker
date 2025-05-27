@@ -48,11 +48,17 @@ services:
       - traefik.http.routers.as_public.priority=1
       - traefik.http.routers.as_public.service=as_public
       - traefik.http.services.as_public.loadbalancer.server.port=8081
+      - traefik.http.routers.as_public.middlewares=inflightreq@file,ratelimit@file,bot-wrangler@file,botblocker@file
+    
     networks:
       - archivesspace_net
       - default
     restart: unless-stopped
-    mem_limit: 4g
+    deploy:
+      resources:
+        limits:
+          memory: 4g
+          cpus: "3"
 
   as_solr:
     image: archivesspace/solr:${ARCHIVESSPACE_DOCKER_TAG}
@@ -66,7 +72,11 @@ services:
       - archivesspace_net
     command: solr-create -p 8983 -c archivesspace -d archivesspace
     restart: unless-stopped
-    mem_limit: 1536m
+    deploy:
+      resources:
+        limits:
+          memory: 1536m
+          cpus: "1"
 
 volumes:
   app-data:
