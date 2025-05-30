@@ -3,8 +3,8 @@
 
 services:
   archivesspace:
-    image: archivesspace/archivesspace:${ARCHIVESSPACE_DOCKER_TAG}
     container_name: archivesspace
+    image: archivesspace/archivesspace:${ARCHIVESSPACE_DOCKER_TAG}
     platform: linux/amd64
     env_file:
       - .env
@@ -13,8 +13,8 @@ services:
       - as_solr
     volumes:
       - app-data:/archivesspace/data
-      - ./archivesspace/plugins:/archivesspace/plugins
-      - ./archivesspace/config:/archivesspace/config
+      - ./mounted/archivesspace/plugins:/archivesspace/plugins
+      - ./mounted/archivesspace/config:/archivesspace/config
     labels:
       - traefik.enable=true
       - traefik.docker.network=traefik_net
@@ -57,9 +57,10 @@ services:
     mem_limit: 4g
 
   as_solr:
-    image: archivesspace/solr:${ARCHIVESSPACE_DOCKER_TAG}
-    platform: linux/amd64
-    # image: archivesspace/solr:m1
+    # image: archivesspace/solr:${ARCHIVESSPACE_DOCKER_TAG}
+    # platform: linux/amd64
+    image: archivesspace/solr:m1
+    platform: linux/arm64
     container_name: as_solr
     build: ./solr
     env_file:
@@ -83,7 +84,7 @@ services:
       - archivesspace_net
     volumes:
       - db-data:/var/lib/mysql
-      - ./sql:/docker-entrypoint-initdb.d
+      - ./db_autoimport:/docker-entrypoint-initdb.d
     command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --innodb_buffer_pool_size=1G  --innodb_buffer_pool_instances=1 --log_bin_trust_function_creators=1
     restart: unless-stopped
 
