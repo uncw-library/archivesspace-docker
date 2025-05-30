@@ -1,24 +1,15 @@
-Scratching together some ideas.
-
-Problems:
-  - to build an image, we could bake the plugins & config into the docker image.  But that requires also pulling in all the archivesspace code.
-  - so far, I've gone half-way down both direction, but should pick only one.
-  - maybe make this only the production docker-compose, and leave Lyrasis to make the docker image
-
-
-
 # ArchivesSpace docker compose
 
 revised from [ArchivesSpace docs.](https://docs.archivesspace.org/administration/docker/)  Lyrasys offers this as an officially supported production install.
 
+if needing to build own images (i.e., arm64, etc), `git clone https://github.com/archivesspace/archivesspace`  and `docker build` the desired image.
+
 ## Dev box
-1) Create a file archivesspace-docker/.env with contents:
-    ```
-    ...add contents
-    ```
-1) (optional) place a recent sql dump into archivesspace-docker/sql/  This folder is gitignored.
-1) (optional) revise the config file at ./archivesspace/config/config.rb
-1) (optional) add any plugins to archivesspace-docker/archivesspace/plugins.  This folder is gitignored.
+1) Create a file archivesspace-docker/.env with contents similar to .env_example
+
+1) (optional) place a recent sql dump into archivesspace-docker/db_autoimport/  The contents of this folder are gitignored.
+1) (optional) created a config.rb file similar to the the ./mounted/app/archivesspace/config/config_example.rb  This file is gitignored.
+1) (optional) add any plugins to archivesspace-docker/mounted/app/archivesspace/plugins/.  This folder is gitignored.
 1) `docker compose up -d`
 
 ### To clear the solr index
@@ -36,7 +27,7 @@ docker compose up -d
 ```
 
 ### To clear the db
-1) place a recent good archivesspace sqldump into ./sql
+1) (optional) place a recent good archivesspace sqldump into ./sql
 
 2)  ```
     docker compose down
@@ -44,14 +35,7 @@ docker compose up -d
     docker compose up -d
     ```
 
-# Production
-1) git clone this repo and git checkout branch 'production'
-1) Create an env file at ./.env with contents:
-    ```
-    ...add contents
-    ```
-1) our db is on a different server, so setup that database and point to it the archivesspace/config/config.rb
-1) `docker compose up -d`
-1) the same commands for clearing the solr or the app data
+## Production
+1) we use traefik instead of nginx, and our db is on a dedicated server.  but see git branch 'archivesspace-dev' for an example of our pre-prod server.
 
 
