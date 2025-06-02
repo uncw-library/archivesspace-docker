@@ -57,10 +57,8 @@ services:
     mem_limit: 4g
 
   as_solr:
-    # image: archivesspace/solr:${ARCHIVESSPACE_DOCKER_TAG}
-    # platform: linux/amd64
-    image: archivesspace/solr:m1
-    platform: linux/arm64
+    image: archivesspace/solr:${ARCHIVESSPACE_DOCKER_TAG}
+    platform: linux/amd64
     container_name: as_solr
     build: ./solr
     env_file:
@@ -69,6 +67,8 @@ services:
       - solr-data:/var/solr
     networks:
       - archivesspace_net
+    ports:
+      - 8983:8983
     command: solr-create -p 8983 -c archivesspace -d archivesspace
     restart: unless-stopped
     mem_limit: 1536m
