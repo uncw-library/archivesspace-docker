@@ -54,12 +54,16 @@ services:
       - archivesspace_net
       - default
     restart: unless-stopped
-    mem_limit: 4g
+    deploy:
+      resources:
+        limits:
+          memory: 4g
+          cpus: "3"
 
   as_solr:
+    container_name: as_solr
     image: archivesspace/solr:${ARCHIVESSPACE_DOCKER_TAG}
     platform: linux/amd64
-    container_name: as_solr
     build: ./solr
     env_file:
       - .env
@@ -71,11 +75,15 @@ services:
       - 8983:8983
     command: solr-create -p 8983 -c archivesspace -d archivesspace
     restart: unless-stopped
-    mem_limit: 1536m
+    deploy:
+      resources:
+        limits:
+          memory: 1536m
+          cpus: "1"
 
   as_db:
-    image: mysql:8
     container_name: as_db
+    image: mysql:8
     cap_add:
       - SYS_NICE
     env_file:
