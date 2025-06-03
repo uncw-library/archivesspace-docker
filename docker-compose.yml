@@ -2,24 +2,30 @@
 # See also: https://docs.archivesspace.org/administration/docker/
 
 services:
-  app:
-    image: archivesspace/archivesspace:${ARCHIVESSPACE_DOCKER_TAG}
+  archivesspace:
     container_name: archivesspace
+    image: archivesspace/archivesspace:${ARCHIVESSPACE_DOCKER_TAG}
+    platform: linux/amd64
     env_file:
       - .env
     depends_on:
-      - db
-      - solr
+      - as_db
+      - as_solr
     volumes:
       - app-data:/archivesspace/data
-      - ./mounted/app/archivesspace/plugins:/archivesspace/plugins
-      - ./mounted/app/archivesspace/config:/archivesspace/config
+      - ./mounted/archivesspace/plugins:/archivesspace/plugins
+      - ./mounted/archivesspace/config:/archivesspace/config
     restart: unless-stopped
-    mem_limit: 4g
+    deploy:
+      resources:
+        limits:
+          memory: 4g
+          cpus: "3"
 
-  solr:
+  as_solr:
     image: archivesspace/solr:${ARCHIVESSPACE_DOCKER_TAG}
-    container_name: solr
+    container_name: as_solr
+    platform: linux/amd64
     env_file:
       - .env
     ports:
@@ -28,25 +34,33 @@ services:
       - solr-data:/var/solr
     command: solr-create -p 8983 -c archivesspace -d archivesspace
     restart: unless-stopped
-    mem_limit: 1536m
+    deploy:
+      resources:
+        limits:
+          memory: 1536m
+          cpus: "1"
 
-  proxy:
+  as_proxy:
     image: nginx:1.21
-    container_name: proxy
+    container_name: as_proxy
     env_file:
       - .env
     depends_on:
-      - app
+      - archivesspace
     ports:
       - "${NGINX_PORT}:80"
     volumes:
       - ./mounted/proxy/etc/nginx/conf.d:/etc/nginx/conf.d
     restart: unless-stopped
-    mem_limit: 512m
+    deploy:
+      resources:
+        limits:
+          memory: 512m
+          cpus: "1"
 
-  db:
+  as_db:
     image: mysql:8
-    container_name: mysql
+    container_name: as_db
     cap_add:
       - SYS_NICE
     env_file:
