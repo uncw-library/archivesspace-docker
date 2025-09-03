@@ -9,8 +9,8 @@ services:
     env_file:
       - .env
     depends_on:
-      - as_db
-      - as_solr
+      as_solr:
+        condition: service_healthy
     volumes:
       - app-data:/archivesspace/data
       - ./mounted/archivesspace/plugins:/archivesspace/plugins
@@ -39,6 +39,12 @@ services:
         limits:
           memory: 1536m
           cpus: "1"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8983/solr/admin/cores?action=STATUS&core=archivesspace&wt=json"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
 
   as_proxy:
     image: nginx:1.21
