@@ -2,3 +2,4 @@
 archivesspace/config/config.rb
 config.rb
 db_autoimport
+mounted/archivesspace/config/config.rb
