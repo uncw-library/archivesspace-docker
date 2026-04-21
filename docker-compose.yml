@@ -44,6 +44,14 @@ services:
       - traefik.http.routers.as_oai.service=as_oai
       - traefik.http.services.as_oai.loadbalancer.server.port=8082
 
+      # lower priority, catch-all default for on campus users
+      - traefik.http.routers.oncampus_as_public.entrypoints=websecure
+      - traefik.http.routers.oncampus_as_public.rule=Host(`archivesspace.uncw.edu`) && (ClientIP("127.0.0.1/32") || ClientIP("10.0.0.0/8") || ClientIP("172.16.0.0/12") || ClientIP("192.168.0.0/16") || ClientIP("152.20.0.0/16"))
+      - traefik.http.routers.oncampus_as_public.tls=true
+      - traefik.http.routers.oncampus_as_public.priority=5
+      - traefik.http.routers.oncampus_as_public.service=oncampus_as_public
+      - traefik.http.services.oncampus_as_public.loadbalancer.server.port=8081
+
       # lowest priority, catch-all default
       - traefik.http.routers.as_public.entrypoints=websecure
       - traefik.http.routers.as_public.rule=Host(`archivesspace.uncw.edu`)
@@ -53,6 +61,7 @@ services:
       - traefik.http.services.as_public.loadbalancer.server.port=8081
       - traefik.http.routers.as_public.middlewares=mydenyip@file,inflightreq@file,ratelimit@file,bot-wrangler@file,botblocker@file
 
+
     networks:
       - archivesspace_net
       - default
@@ -60,7 +69,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 4g
+          memory: 5g
           cpus: "3"
 
   as_solr:
@@ -77,8 +86,8 @@ services:
     deploy:
       resources:
         limits:
-          memory: 1536m
-          cpus: "1"
+          memory: 2G
+          cpus: "3"
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8983/solr/admin/cores?action=STATUS&core=archivesspace&wt=json"]
       interval: 30s
