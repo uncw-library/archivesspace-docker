@@ -3,3 +3,4 @@ archivesspace/config/config.rb
 config.rb
 db_autoimport
 .DS_Store
+mounted/archivesspace/config/config.rb
