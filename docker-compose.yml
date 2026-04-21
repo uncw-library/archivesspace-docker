@@ -25,6 +25,8 @@ services:
       - traefik.http.routers.as_api.tls=true
       - traefik.http.routers.as_api.priority=200
       - traefik.http.routers.as_api.service=as_api
+      - traefik.http.routers.as_api.middlewares=as_api_strip
+      - traefik.http.middlewares.as_api_strip.stripprefix.prefixes=/staff/api
       - traefik.http.services.as_api.loadbalancer.server.port=8089
 
       # med priority, a subpath
