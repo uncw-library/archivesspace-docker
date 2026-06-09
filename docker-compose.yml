@@ -9,8 +9,9 @@ services:
     env_file:
       - .env
     depends_on:
+      as_solr:
+        condition: service_healthy
       - as_db
-      - as_solr
     volumes:
       - app-data:/archivesspace/data
       - ./mounted/archivesspace/config:/archivesspace/config
@@ -52,8 +53,8 @@ services:
       - traefik.http.routers.as_public.priority=1
       - traefik.http.routers.as_public.service=as_public
       - traefik.http.services.as_public.loadbalancer.server.port=8081
-      - traefik.http.routers.as_public.middlewares=inflightreq@file,ratelimit@file,bot-wrangler@file,botblocker@file
-    
+      # - traefik.http.routers.as_public.middlewares=inflightreq@file,ratelimit@file,bot-wrangler@file,botblocker@file
+
     networks:
       - archivesspace_net
       - default
@@ -61,14 +62,13 @@ services:
     deploy:
       resources:
         limits:
-          memory: 4g
+          memory: 5g
           cpus: "3"
 
   as_solr:
     container_name: as_solr
     image: archivesspace/solr:${ARCHIVESSPACE_DOCKER_TAG}
     platform: linux/amd64
-    build: ./solr
     env_file:
       - .env
     volumes:
@@ -80,8 +80,14 @@ services:
     deploy:
       resources:
         limits:
-          memory: 1536m
-          cpus: "1"
+          memory: 2G
+          cpus: "3"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8983/solr/admin/cores?action=STATUS&core=archivesspace&wt=json"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
 
   as_db:
     container_name: as_db
@@ -109,3 +115,4 @@ networks:
     external: true
   archivesspace_net:
     internal: true
+    driver: bridge
