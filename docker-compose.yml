@@ -11,7 +11,8 @@ services:
     depends_on:
       as_solr:
         condition: service_healthy
-      - as_db
+      as_db:
+        condition: service_started
     volumes:
       - app-data:/archivesspace/data
       - ./mounted/archivesspace/config:/archivesspace/config
@@ -27,12 +28,13 @@ services:
       - traefik.http.routers.as_api.priority=200
       - traefik.http.routers.as_api.service=as_api
       - traefik.http.middlewares.as_api_strip.stripprefix.prefixes=/staff/api
-      - traefik.http.routers.as_api.middlewares=as_api_strip,on-campus-allowlist@file
+      # - traefik.http.routers.as_api.middlewares=as_api_strip,on-campus-allowlist@file
+      - traefik.http.routers.as_api.middlewares=as_api_strip
       - traefik.http.services.as_api.loadbalancer.server.port=8089
 
       # med priority, a subpath
       - traefik.http.routers.as_staff.entrypoints=websecure
-      - traefik.http.routers.as_staff.rule=Host(`archivesspace.localhost`) && PathPrefix(`/staff`)
+      - traefik.http.routers.as_staff.rule=Host(`aspace.localhost`)
       - traefik.http.routers.as_staff.tls=true
       - traefik.http.routers.as_staff.priority=100
       - traefik.http.routers.as_staff.service=as_staff
@@ -53,7 +55,7 @@ services:
       - traefik.http.routers.as_public.priority=1
       - traefik.http.routers.as_public.service=as_public
       - traefik.http.services.as_public.loadbalancer.server.port=8081
-      # - traefik.http.routers.as_public.middlewares=inflightreq@file,ratelimit@file,bot-wrangler@file,botblocker@file
+      - traefik.http.routers.as_public.middlewares=inflightreq@file,ratelimit@file,bot-wrangler@file,botblocker@file
 
     networks:
       - archivesspace_net
