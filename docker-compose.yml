@@ -59,7 +59,7 @@ services:
       - traefik.http.routers.as_public.priority=1
       - traefik.http.routers.as_public.service=as_public
       - traefik.http.services.as_public.loadbalancer.server.port=8081
-      - traefik.http.routers.as_public.middlewares=mydenyip@file,inflightreq@file,ratelimit@file,bot-wrangler@file,botblocker@file
+      - traefik.http.routers.as_public.middlewares=mydenyip@file,inflightreq@file,ratelimit@file,bot-wrangler@file,uncw-botblocker@file
 
 
     networks:
