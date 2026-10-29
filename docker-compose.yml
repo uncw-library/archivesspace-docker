@@ -60,7 +60,7 @@ services:
       resources:
         limits:
           memory: 4g
-          cpus: "3"
+          cpus: "1"
 
   as_solr:
     image: archivesspace/solr:${ARCHIVESSPACE_DOCKER_TAG}
