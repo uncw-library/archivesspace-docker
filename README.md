@@ -1,12 +1,5 @@
 Scratching together some ideas.
 
-Problems:
-  - to build an image, we could bake the plugins & config into the docker image.  But that requires also pulling in all the archivesspace code.
-  - so far, I've gone half-way down both direction, but should pick only one.
-  - maybe make this only the production docker-compose, and leave Lyrasis to make the docker image
-
-  - a different approach is to make this repo a wrapper around the main archivesspace folder
-
 # Config
 
 1. Copy the file `.env_example` to `.env`   then revise as desired.  No change is required.
