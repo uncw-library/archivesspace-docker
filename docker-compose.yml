@@ -19,7 +19,7 @@ services:
 
       # highest priority, a deep subpath
       - traefik.http.routers.as_api.entrypoints=websecure
-      - traefik.http.routers.as_api.rule=Host(`archivesspace-dev.uncw.edu`) && PathPrefix(`/staff/api`)
+      - traefik.http.routers.as_api.rule=Host(`archivesspace-dev.libapps-dev.uncw.edu`) && PathPrefix(`/staff/api`)
       - traefik.http.routers.as_api.tls=true
       - traefik.http.routers.as_api.priority=200
       - traefik.http.routers.as_api.service=as_api
@@ -29,7 +29,7 @@ services:
 
       # med priority, a subpath
       - traefik.http.routers.as_staff.entrypoints=websecure
-      - traefik.http.routers.as_staff.rule=Host(`aspace-dev.uncw.edu`)
+      - traefik.http.routers.as_staff.rule=Host(`aspace-dev.libapps-dev.uncw.edu`)
       - traefik.http.routers.as_staff.tls=true
       - traefik.http.routers.as_staff.priority=100
       - traefik.http.routers.as_staff.service=as_staff
@@ -37,7 +37,7 @@ services:
 
       # med priority, a subpath
       - traefik.http.routers.as_oai.entrypoints=websecure
-      - traefik.http.routers.as_oai.rule=Host(`archivesspace-dev.uncw.edu`) && PathPrefix(`/oai`)
+      - traefik.http.routers.as_oai.rule=Host(`archivesspace-dev.libapps-dev.uncw.edu`) && PathPrefix(`/oai`)
       - traefik.http.routers.as_oai.tls=true
       - traefik.http.routers.as_oai.priority=100
       - traefik.http.routers.as_oai.service=as_oai
@@ -45,7 +45,7 @@ services:
 
       # lowest priority, catch-all default
       - traefik.http.routers.as_public.entrypoints=websecure
-      - traefik.http.routers.as_public.rule=Host(`archivesspace-dev.uncw.edu`)
+      - traefik.http.routers.as_public.rule=Host(`archivesspace-dev.libapps-dev.uncw.edu`)
       - traefik.http.routers.as_public.tls=true
       - traefik.http.routers.as_public.priority=1
       - traefik.http.routers.as_public.service=as_public
@@ -56,11 +56,11 @@ services:
       - archivesspace_net
       - default
     restart: unless-stopped
-    deploy:
-      resources:
-        limits:
-          memory: 4g
-          cpus: "3"
+    #deploy:
+      #resources:
+        #limits:
+          #memory: 4g
+          #cpus: "3"
 
   as_solr:
     image: archivesspace/solr:${ARCHIVESSPACE_DOCKER_TAG}
@@ -74,11 +74,11 @@ services:
       - archivesspace_net
     command: solr-create -p 8983 -c archivesspace -d archivesspace
     restart: unless-stopped
-    deploy:
-      resources:
-        limits:
-          memory: 1536m
-          cpus: "1"
+    #deploy:
+      #resources:
+        #limits:
+          #memory: 1536m
+          #cpus: "1"
 
 volumes:
   app-data:
